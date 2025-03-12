@@ -1,12 +1,15 @@
 import streamlit as st
 import pandas as pd
 
-# Cargar el CSV con los libros
+# URL cruda del CSV en GitHub
+csv_url = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
+
+# Cargar el CSV con los libros desde GitHub
 def cargar_datos():
-    csv_path = "/content/gdrive/MyDrive/libreria_streamlite/CSV_Libros/libros_descargados.csv"
     try:
-        return pd.read_csv(csv_path)
-    except FileNotFoundError:
+        return pd.read_csv(csv_url)
+    except Exception as e:
+        st.error(f"Error al cargar los datos: {e}")
         return pd.DataFrame(columns=["ID", "Título", "Autor", "Archivo", "Fecha", "Género", "Sinopsis", "Enlace"])
 
 # Interfaz en Streamlit
