@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import requests
+import io
 
 # URL cruda del CSV en GitHub
 csv_url = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
@@ -12,6 +14,17 @@ def cargar_datos():
     except Exception as e:
         st.error(f"Error al cargar los datos: {e}")
         return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis", "Archivo"])
+
+# Función para descargar el archivo antes de pasarlo a Streamlit
+def descargar_archivo(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return io.BytesIO(response.content)  # Devuelve el contenido como un archivo en memoria
+        else:
+            return None
+    except Exception as e:
+        return None
 
 # Interfaz en Streamlit
 st.title("📚 Librería Digital")
@@ -26,11 +39,16 @@ if not df_libros.empty:
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
 
-            # Botón de descarga rápida sin procesar todos los libros al inicio
-            st.download_button(
-                label="📥 Descargar",
-                data="",
-                file_name=row["Archivo"],
-                key=row["ID"],
-                on_click=lambda link=row["Enlace"]: st.markdown(f"[Descargar ahora]({link})")
-            )
+            # Descargar el archivo antes de pasarlo al botón de descarga
+            archivo = descargar_archivo(row['Enlace'])
+
+            if archivo:
+                # Botón de descarga con el archivo cargado correctamente
+                st.download_button(
+                    label="📥 Descargar",
+                    data=archivo,
+                    file_name=row["Archivo"],
+                    mime="application/epub+zip"
+                )
+            else:
+                st.error("⚠️ Error al descargar el archivo.")
