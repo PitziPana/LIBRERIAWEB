@@ -1,5 +1,3 @@
-import streamlit as st
-import pandas as pd
 
 # URL cruda del CSV en GitHub
 csv_url = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
