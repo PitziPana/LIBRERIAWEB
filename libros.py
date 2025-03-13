@@ -4,27 +4,25 @@ import pandas as pd
 # URL cruda del CSV en GitHub
 csv_url = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
 
-# Cargar el CSV con los libros desde GitHub
-@st.cache_data
+# 🔄 Forzar la recarga sin caché
+@st.cache_data(ttl=0)  # Esto hace que se recargue cada vez que se ejecuta la app
 def cargar_datos():
-    try:
-        return pd.read_csv(csv_url)
-    except Exception as e:
-        st.error(f"Error al cargar los datos: {e}")
-        return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis", "Archivo"])
+    return pd.read_csv(csv_url)
 
 # Interfaz en Streamlit
 st.title("📚 Librería Digital")
 
 df_libros = cargar_datos()
 
+# 📌 Mostrar la fuente y el número de libros cargados
+st.write(f"📂 Cargando desde: {csv_url}")
+st.write(f"🔢 Número de libros en el CSV: {len(df_libros)}")
+
 if not df_libros.empty:
-    st.write(f"📚 **Total de libros disponibles:** {len(df_libros)}")
+    st.write("Listado de libros disponibles:")
 
     for index, row in df_libros.iterrows():
         with st.expander(f"📖 {row['Título']} - {row['Autor']}"):
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
-
-            # 🔥 ENLACE DIRECTO (Evita problemas de descargas vacías)
-            st.markdown(f"[📥 Descargar]({row['Enlace']})", unsafe_allow_html=True)
+            st.markdown(f"[📥 Descargar]({row['Enlace']})")
