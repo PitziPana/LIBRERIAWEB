@@ -1,4 +1,4 @@
-mport streamlit as st
+import streamlit as st
 import pandas as pd
 import requests
 import io
@@ -12,7 +12,7 @@ def cargar_datos():
         return pd.read_csv(csv_url)
     except Exception as e:
         st.error(f"Error al cargar los datos: {e}")
-        return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis"])
+        return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis", "Archivo"])
 
 # Función para descargar el archivo desde Google Drive
 def descargar_archivo(url):
