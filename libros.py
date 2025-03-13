@@ -25,5 +25,5 @@ if not df_libros.empty:
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
 
-            # 🔥 Cambiamos el botón de descarga por un enlace de descarga directo
+            # 🔥 Agregar el enlace de descarga correctamente
             st.markdown(f"[📥 Descargar]({row['Enlace']})")
