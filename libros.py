@@ -24,12 +24,6 @@ if not df_libros.empty:
         with st.expander(f"📖 {row['Título']} - {row['Autor']}"):
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
-            st.download_button(
-                label="📥 Descargar",
-                data="",
-                file_name=row["Archivo"],
-                key=row["ID"],
-                on_click=lambda link=row["Enlace"]: st.markdown(f"[Descargar aquí]({link})")
-            )
-else:
-    st.warning("No se encontraron libros en la base de datos.")
+
+            # 🔥 Cambiamos el botón de descarga por un enlace de descarga directo
+            st.markdown(f"[📥 Descargar]({row['Enlace']})")
