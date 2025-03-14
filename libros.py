@@ -4,7 +4,6 @@ import pandas as pd
 # URL del CSV en GitHub
 CSV_URL = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
 
-# Función para cargar datos
 @st.cache_data
 def cargar_datos():
     try:
@@ -12,22 +11,30 @@ def cargar_datos():
         return df
     except Exception as e:
         st.error(f"Error al cargar los datos: {e}")
-        return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis"])
+        return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Sinopsis", "Enlace"])
 
 # Cargar datos
+st.title("📚 Librería Digital")
 df_libros = cargar_datos()
 
-# Título de la aplicación
-st.title("📚 Librería Digital")
-
-# Mostrar número de libros
+# Mostrar total de libros
 st.markdown(f"📖 **Número de libros en el catálogo:** {len(df_libros)}")
 
-if not df_libros.empty:
-    st.write("Listado de libros disponibles:")
+# Cuadro de búsqueda
+busqueda = st.text_input("🔍 Buscar libros por título o autor:")
 
-    for index, row in df_libros.iterrows():
+# Filtrar libros
+if busqueda:
+    df_libros = df_libros[df_libros["Título"].str.contains(busqueda, case=False, na=False) |
+                           df_libros["Autor"].str.contains(busqueda, case=False, na=False)]
+
+# Mostrar libros
+if not df_libros.empty:
+    for _, row in df_libros.iterrows():
         with st.expander(f"📖 {row['Título']} - {row['Autor']}"):
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
-            st.markdown(f"[📥 Descargar libro](https://drive.google.com/uc?export=download&id={row['Enlace'].split('id=')[-1]})")
+            enlace_descarga = row["Enlace"]
+            st.markdown(f"📥 [Descargar libro]({enlace_descarga})")
+else:
+    st.warning("No se encontraron libros con ese criterio de búsqueda.")
