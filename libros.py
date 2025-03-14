@@ -1,23 +1,26 @@
 import streamlit as st
 import pandas as pd
 
-# URL del CSV en GitHub (se usa internamente, pero no se muestra)
-csv_url = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
+# URL del CSV en GitHub
+CSV_URL = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
 
-# Cargar el CSV con los libros desde GitHub
+# Función para cargar datos
+@st.cache_data
 def cargar_datos():
     try:
-        return pd.read_csv(csv_url)
+        df = pd.read_csv(CSV_URL)
+        return df
     except Exception as e:
         st.error(f"Error al cargar los datos: {e}")
         return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis"])
 
-# Interfaz en Streamlit
-st.title("📚 Librería Digital")
-
+# Cargar datos
 df_libros = cargar_datos()
 
-# Mostrar el número de libros sin el enlace al CSV
+# Título de la aplicación
+st.title("📚 Librería Digital")
+
+# Mostrar número de libros
 st.markdown(f"📖 **Número de libros en el catálogo:** {len(df_libros)}")
 
 if not df_libros.empty:
@@ -27,3 +30,4 @@ if not df_libros.empty:
         with st.expander(f"📖 {row['Título']} - {row['Autor']}"):
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
+            st.markdown(f"[📥 Descargar libro](https://drive.google.com/uc?export=download&id={row['Enlace'].split('id=')[-1]})")
