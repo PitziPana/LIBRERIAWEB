@@ -18,6 +18,11 @@ def cargar_datos():
 
 # Cargar datos
 st.title("📚 Librería Digital")
+
+# Avatar y título personalizado
+st.image("https://avatars.githubusercontent.com/u/12345678?v=4", width=100)
+st.markdown("### Tailored by Pitzipana")
+
 df_libros = cargar_datos()
 
 # Mostrar total de libros
@@ -37,7 +42,14 @@ if not df_libros.empty:
         with st.expander(f"📖 {row['Título']} - {row['Autor']}"):
             st.write(f"**Género:** {row['Género']}")
             st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
-            enlace_descarga = row["Enlace"]
+            
+            # Convertir enlace a descarga directa
+            if "id=" in row["Enlace"]:
+                id_archivo = row["Enlace"].split("id=")[-1].split("&")[0]
+                enlace_descarga = f"https://drive.google.com/uc?export=download&id={id_archivo}"
+            else:
+                enlace_descarga = row["Enlace"]
+
             st.markdown(f"📥 [Descargar libro]({enlace_descarga})")
 else:
     st.warning("No se encontraron libros con ese criterio de búsqueda.")
