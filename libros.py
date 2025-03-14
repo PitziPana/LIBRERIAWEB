@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 
+# Limpiar caché al inicio
+st.cache_data.clear()
+
 # URL del CSV en GitHub
 CSV_URL = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
 
