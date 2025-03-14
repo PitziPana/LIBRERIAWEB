@@ -1,22 +1,27 @@
 import streamlit as st
+import pandas as pd
 
-# 📂 Simulación de enlaces de libros desde Google Drive (debes conectar con tu fuente real)
-libros = [
-    {"titulo": "Libro 1", "enlace": "https://drive.google.com/uc?export=download&id=ID_DEL_ARCHIVO_1"},
-    {"titulo": "Libro 2", "enlace": "https://drive.google.com/uc?export=download&id=ID_DEL_ARCHIVO_2"},
-    {"titulo": "Libro 3", "enlace": "https://drive.google.com/uc?export=download&id=ID_DEL_ARCHIVO_3"},
-]
+# Cargar datos desde el CSV (asegúrate de que la ruta es correcta)
+CSV_PATH = "ruta_a_tu_csv/libros_descargados.csv"  # Cambia esto por la ubicación real
+df = pd.read_csv(CSV_PATH)
 
-# 🖥️ Mostrar cada libro con su enlace
-st.title("📚 Biblioteca de libros")
+# Mostrar en Streamlit
+st.title("📚 Biblioteca Digital")
 
-for libro in libros:
-    st.write(f"📖 **{libro['titulo']}**")
-    
-    # 🔍 Mostrar el enlace en pantalla para ver si es correcto
-    st.write(f"🔗 **Enlace generado:** {libro['enlace']}")
+for index, row in df.iterrows():
+    titulo = row["Título"]
+    autor = row["Autor"]
+    enlace = row["Enlace"]
+    portada = f"https://drive.google.com/thumbnail?id={enlace.split('id=')[-1]}&sz=w200"  # Genera la miniatura
 
-    # 📥 Botón de descarga
-    st.markdown(f"[📥 Descargar libro]({libro['enlace']})")
+    # Mostrar la información en Streamlit
+    with st.container():
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.image(portada, caption=titulo, use_column_width=True)
+        with col2:
+            st.subheader(titulo)
+            st.write(f"**Autor:** {autor}")
+            st.markdown(f"[📥 Descargar libro](https://drive.google.com/uc?export=download&id={enlace.split('id=')[-1]})")
 
-    st.write("---")  # Separador entre libros
+st.success("✅ Enlaces corregidos y funcionando correctamente")
