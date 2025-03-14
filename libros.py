@@ -1,28 +1,29 @@
 import streamlit as st
 import pandas as pd
 
-# URL del CSV en GitHub
+# URL del CSV en GitHub (se usa internamente, pero no se muestra)
 csv_url = "https://raw.githubusercontent.com/PitziPana/LIBRERIAWEB/main/libros_descargados.csv"
 
-# Cargar el CSV
+# Cargar el CSV con los libros desde GitHub
 def cargar_datos():
     try:
         return pd.read_csv(csv_url)
     except Exception as e:
         st.error(f"Error al cargar los datos: {e}")
-        return pd.DataFrame(columns=["ID", "Título", "Autor", "Enlace"])
+        return pd.DataFrame(columns=["ID", "Título", "Autor", "Género", "Enlace", "Sinopsis"])
 
 # Interfaz en Streamlit
-st.title("📚 Librería Digital - Prueba de Enlaces")
+st.title("📚 Librería Digital")
 
 df_libros = cargar_datos()
 
-# Verificar si el CSV se cargó bien
-if df_libros.empty:
-    st.error("No se han encontrado datos en el CSV.")
-else:
-    st.success(f"📖 **Número de libros en el catálogo:** {len(df_libros)}")
+# Mostrar el número de libros sin el enlace al CSV
+st.markdown(f"📖 **Número de libros en el catálogo:** {len(df_libros)}")
+
+if not df_libros.empty:
+    st.write("Listado de libros disponibles:")
 
     for index, row in df_libros.iterrows():
         with st.expander(f"📖 {row['Título']} - {row['Autor']}"):
-            st.markdown(f"[📥 Descargar libro]({row['Enlace']})")
+            st.write(f"**Género:** {row['Género']}")
+            st.write(f"**Sinopsis:** {row['Sinopsis'] if pd.notna(row['Sinopsis']) else 'No disponible'}")
